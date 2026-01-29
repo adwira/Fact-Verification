@@ -8,6 +8,7 @@ class Settings(BaseSettings):
   SERPER_API_KEY: str
   FIRECRAWL_API_KEY: str
   OPENAI_API_KEY: str
+  GEMINI_API_KEY: str
   
   # Konfigurasi Database/Cache
   CHROMA_DB_PATH: str = "./chroma_db"

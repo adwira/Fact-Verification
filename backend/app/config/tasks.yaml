@@ -1,0 +1,49 @@
+generate_query_task:
+  description: >
+    Analisis klaim berikut secara semantik: "{claim}".
+    
+    Tugas Anda adalah merancang strategi pencarian informasi yang efektif.
+    Jangan hanya mencari klaim mentah. Pikirkan kata kunci alternatif, sinonim, 
+    atau konteks yang dapat memverifikasi kebenaran klaim tersebut.
+    
+    Gunakan kemampuan "Google Dorking" (site:, intext:, intitle:) untuk membuat 
+    query yang menargetkan situs berita terpercaya atau jurnal ilmiah.
+  expected_output: >
+    Python List berisi 1 hingga 3 string query pencarian. Contoh: ["site:kompas.com vaksin", "site:turnbackhoax.id vaksin magnet"]
+  agent: query_optimizer
+
+gather_evidence_task:
+  description: >
+    Gunakan query yang dihasilkan untuk mencari informasi menggunakan 'SerperTool'.
+    Ambil 5 URL paling relevan.
+    Lakukan scraping mendalam pada URL tersebut menggunakan 'FirecrawlTool'.
+    
+    Filter informasi:
+    - Abaikan iklan dan opini pembaca.
+    - Ambil tanggal kejadian, lokasi, dan pernyataan resmi.
+    - Cari kutipan yang secara eksplisit mendukung atau membantah klaim: "{claim}".
+    
+    Susun menjadi ringkasan bukti (Evidence Brief).
+  expected_output: >
+    Ringkasan bukti dalam format Markdown. Harus mencantumkan Sumber (Domain) dan Poin Kunci yang ditemukan.
+  agent: evidence_collector
+
+verdict_determination_task:
+  description: >
+    Anda adalah penentu kebenaran terakhir.
+    
+    Klaim: "{claim}"
+    Bukti Terkumpul:
+    {generate_query_task_output} (Note: CrewAI akan menginjeksi output task sebelumnya di sini)
+    
+    Lakukan evaluasi sesuai dengan instruksi pada Backstory Anda.
+    Tentukan status klaim: FAKTA, HOAKS, DISINFORMASI, atau TIDAK TERBUKTI.
+  expected_output: >
+    HANYA format JSON valid persis seperti ini:
+    {
+      "verdict": "FAKTA/HOAKS/DISINFORMASI",
+      "confidence_score": 0.0 sampai 1.0,
+      "explanation": "Penjelasan logis maksimal 5 kalimat.",
+      "sources": ["list domain pendukung"]
+    }
+  agent: verdict_specialist

@@ -1,0 +1,11 @@
+validate_input_task:
+  description: >
+    Analisis teks input pengguna: "{claim}".
+    Tentukan apakah teks tersebut memenuhi kriteria sebagai klaim yang bisa diverifikasi (fact-checkable claim).
+  expected_output: >
+    HANYA format JSON valid tanpa markdown block:
+    {
+      "is_valid_claim": true atau false,
+      "reason": "Alasan singkat dalam 1 kalimat bahasa Indonesia."
+    }
+  agent: claim_validator

@@ -9,6 +9,14 @@ app.include_router(verification.router, prefix="/api/v1", tags=["Verification"])
 
 app.add_exception_handler(AppBaseException, app_exception_handler)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 async def root():
     return {"message": "Backend Verifikasi Fakta Aktif"}

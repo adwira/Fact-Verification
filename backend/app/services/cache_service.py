@@ -29,6 +29,7 @@ class CacheService:
       confidence_score=metadata['confidence_score'],
       explanation=metadata['explanation'],
       sources=sources,
+      verified_at=metadata.get('verified_at'),
       is_from_cache=True,
     )
   
@@ -41,5 +42,10 @@ class CacheService:
         "confidence_score": fact.confidence_score,
         "explanation": fact.explanation,
         "sources": json.dumps(fact.sources),
+        "verified_at": fact.verified_at,
       }]
     )
+
+  async def clear_all_cache(self):
+    """Menghapus seluruh cache yang tersimpan di koleksi."""
+    self.collection.delete(where={})

@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -13,7 +15,7 @@ class Settings(BaseSettings):
   # Konfigurasi Database/Cache
   CHROMA_DB_PATH: str = "./chroma_db"
   
-  model_config = SettingsConfigDict(env_file=".env")
+  model_config = SettingsConfigDict(env_file=".env", extra="ignore")
   
   @property
   def WHITELIST_DOMAINS(self) -> list[str]:

@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
+from datetime import datetime
 
 class VerificationRequest(BaseModel):
-  claim: str = Field(..., min_length=100, description="Klaim berita yang ingin diverifikasi")
+  claim: str = Field(..., min_length=50, description="Klaim berita yang ingin diverifikasi")
 
 class VerificationResponse(BaseModel):
   claim: str
@@ -10,4 +11,5 @@ class VerificationResponse(BaseModel):
   confidence_score: float
   explanation: str
   sources: List[str]
+  verified_at: Optional[str] = None
   is_from_cache: bool= False

@@ -2,48 +2,66 @@ generate_query_task:
   description: >
     Analisis klaim berikut secara semantik: "{claim}".
     
-    Tugas Anda adalah merancang strategi pencarian informasi yang efektif.
-    Jangan hanya mencari klaim mentah. Pikirkan kata kunci alternatif, sinonim, 
-    atau konteks yang dapat memverifikasi kebenaran klaim tersebut.
-    
-    Gunakan kemampuan "Google Dorking" (site:, intext:, intitle:) untuk membuat 
-    query yang menargetkan situs berita terpercaya atau jurnal ilmiah.
+    Tugas Anda: merancang strategi pencarian dan LANGSUNG menjalankan pencarian menggunakan 'SerperTool'.
+
+    Aturan pencarian:
+    1. WAJIB membuat query dalam Bahasa Indonesia agar menemukan sumber media Indonesia.
+    2. Gunakan operator site: untuk menargetkan media terpercaya Indonesia, contoh:
+       site:kompas.com OR site:tempo.co OR site:cnnindonesia.com OR site:antaranews.com
+    3. Jika klaim terkait peristiwa terkini, tambahkan tahun (2025 atau 2024) di query
+       atau gunakan beberapa variasi kata kunci berbeda.
+    4. Lakukan MINIMAL 2 kali pencarian dengan variasi query yang berbeda untuk mendapatkan
+       cakupan sumber yang lebih luas.
+    5. Jangan hanya mencari klaim mentah — tambahkan sinonim, entitas terkait, atau
+       kata kunci konteks yang membantu verifikasi.
   expected_output: >
-    Python List berisi 1 hingga 3 string query pencarian. Contoh: ["site:kompas.com vaksin", "site:turnbackhoax.id vaksin magnet"]
+    Daftar URL LENGKAP (bukan hanya domain) dan cuplikan (snippet) dari hasil SerperTool.
+    Format: URL | Judul | Snippet singkat | Tanggal (jika ada)
   agent: query_optimizer
 
 gather_evidence_task:
+  context: [generate_query_task]
   description: >
-    Gunakan query yang dihasilkan untuk mencari informasi menggunakan 'SerperTool'.
-    Ambil 5 URL paling relevan.
-    Lakukan scraping mendalam pada URL tersebut menggunakan 'FirecrawlTool'.
+    Gunakan daftar URL LENGKAP yang ditemukan pada tahap sebelumnya.
+    Lakukan scraping pada URL tersebut menggunakan 'FirecrawlTool' untuk mengambil konten utama.
     
-    Filter informasi:
-    - Abaikan iklan dan opini pembaca.
-    - Ambil tanggal kejadian, lokasi, dan pernyataan resmi.
-    - Cari kutipan yang secara eksplisit mendukung atau membantah klaim: "{claim}".
+    PRIORITASKAN scraping URL dari media Indonesia dan sumber terpercaya.
+    Jika URL tidak bisa di-scrape (error/timeout), catat dan lanjut ke URL berikutnya.
     
-    Susun menjadi ringkasan bukti (Evidence Brief).
+    Filter informasi yang diambil:
+    - Abaikan iklan, komentar pembaca, dan opini editorial.
+    - Ambil: tanggal publikasi, nama media, kutipan narasumber resmi, data statistik.
+    - Cari pernyataan yang secara EKSPLISIT mendukung atau membantah klaim: "{claim}".
+    - Perhatikan relevansi temporal — berita lama mungkin tidak relevan untuk isu terkini.
+    
+    Susun menjadi ringkasan bukti (Evidence Brief) yang terstruktur.
   expected_output: >
-    Ringkasan bukti dalam format Markdown. Harus mencantumkan Sumber (Domain) dan Poin Kunci yang ditemukan.
+    Ringkasan bukti dalam format Markdown dengan struktur:
+    - **Sumber**: [nama media] ([domain]) - [tanggal]
+    - **Poin Kunci**: [temuan utama yang relevan dengan klaim]
+    Jika tidak ada sumber relevan yang berhasil di-scrape, nyatakan: "Bukti tidak mencukupi."
   agent: evidence_collector
 
 verdict_determination_task:
+  context: [generate_query_task, gather_evidence_task]
   description: >
     Anda adalah penentu kebenaran terakhir.
     
     Klaim: "{claim}"
-    Bukti Terkumpul:
-    {generate_query_task_output} (Note: CrewAI akan menginjeksi output task sebelumnya di sini)
+    Bukti terkumpul dan output task sebelumnya akan disediakan sebagai context di bawah ini.
     
     Lakukan evaluasi sesuai dengan instruksi pada Backstory Anda.
     Tentukan status klaim: FAKTA, HOAKS, DISINFORMASI, atau TIDAK TERBUKTI.
+
+    PENTING: Pada field "sources", HANYA cantumkan URL-nya secara eksplisit muncul
+    di hasil pencarian SerperTool pada tahap generate_query_task. Jangan menambahkan domain lain
+    berdasarkan pengetahuan umum Anda. Jika tidak ada URL dari sumber terverifikasi, isi dengan list kosong [].
   expected_output: >
     HANYA format JSON valid persis seperti ini:
     {
       "verdict": "FAKTA/HOAKS/DISINFORMASI",
       "confidence_score": 0.0 sampai 1.0,
       "explanation": "Penjelasan logis maksimal 5 kalimat.",
-      "sources": ["list domain pendukung"]
+      "sources": ["URL yang muncul di hasil SerperTool, contoh: kompas.com/politik/indoneisa"]
     }
   agent: verdict_specialist

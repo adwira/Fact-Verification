@@ -34,18 +34,24 @@ class CacheService:
     )
   
   async def save_to_cache(self, fact: VerificationResponse):
+    metadata = {
+      "verdict": fact.verdict,
+      "confidence_score": fact.confidence_score,
+      "explanation": fact.explanation,
+      "sources": json.dumps(fact.sources),
+    }
+    if fact.verified_at:
+      metadata["verified_at"] = fact.verified_at
+
     self.collection.add(
       ids=[str(uuid.uuid4())],
       documents=[fact.claim],
-      metadatas=[{
-        "verdict": fact.verdict,
-        "confidence_score": fact.confidence_score,
-        "explanation": fact.explanation,
-        "sources": json.dumps(fact.sources),
-        "verified_at": fact.verified_at,
-      }]
+      metadatas=[metadata]
     )
 
   async def clear_all_cache(self):
     """Menghapus seluruh cache yang tersimpan di koleksi."""
-    self.collection.delete(where={})
+    results = self.collection.get()
+    ids = results['ids']
+    if ids:
+      self.collection.delete(ids=ids)

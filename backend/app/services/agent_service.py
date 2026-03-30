@@ -14,11 +14,20 @@ firecrawl_tool = FirecrawlTool()
 
 # LLM: wajib provider="gemini" agar pakai Google GenAI (bukan fallback OpenAI)
 # Pakai model Gemini (bukan Gemma): Gemma 3 27B tidak mendukung "developer instruction" / system prompt yang dipakai CrewAI.
+
+# Pengaturan keamanan agar Gemini tidak memblokir query terkait kekerasan (mis. pembacokan)
+GEMINI_SAFETY_SETTINGS = [
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+]
 flash_llm = LLM(
-  model="gemini-2.0-flash",
+  model="gemini-2.5-flash",
   api_key=settings.GEMINI_API_KEY,
   temperature=0.5,
   provider="gemini",
+  safety_settings=GEMINI_SAFETY_SETTINGS,
 )
 
 pro_llm = LLM(
@@ -26,6 +35,7 @@ pro_llm = LLM(
   api_key=settings.GEMINI_API_KEY,
   temperature=0.2,
   provider="gemini",
+  safety_settings=GEMINI_SAFETY_SETTINGS,
 )
 
 # Templates Kustom untuk mematikan instruksi bawaan crewAI
@@ -91,9 +101,9 @@ class FactCheckerCrew:
       tools=[serper_tool],
       llm=flash_llm,
       verbose=True,
-      system_template=CUSTOM_SYSTEM_TEMPLATE,
-      prompt_template=CUSTOM_PROMPT_TEMPLATE,
-      use_system_prompt=True
+      # system_template=CUSTOM_SYSTEM_TEMPLATE,
+      # prompt_template=CUSTOM_PROMPT_TEMPLATE,
+      # use_system_prompt=True
     )
     
   @agent
@@ -103,9 +113,9 @@ class FactCheckerCrew:
       tools=[firecrawl_tool],
       llm=flash_llm,
       verbose=True,
-      system_template=CUSTOM_SYSTEM_TEMPLATE,
-      prompt_template=CUSTOM_PROMPT_TEMPLATE,
-      use_system_prompt=True
+      # system_template=CUSTOM_SYSTEM_TEMPLATE,
+      # prompt_template=CUSTOM_PROMPT_TEMPLATE,
+      # use_system_prompt=True
     )
     
   @agent

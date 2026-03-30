@@ -40,3 +40,26 @@ async def test_cache_miss(cache_service):
     # Test: Cari klaim yang sama sekali tidak ada di database
     miss = await cache_service.find_similar_fact("Warna langit adalah ungu")
     assert miss is None
+
+@pytest.mark.asyncio
+async def test_clear_all_cache(cache_service):
+    # 1. Simpan data
+    mock_fact = VerificationResponse(
+        claim="Hujan itu air",
+        verdict="Fakta",
+        confidence_score=1.0,
+        explanation="Hujan terdiri dari tetesan air.",
+        sources=["https://wikipedia.org"]
+    )
+    await cache_service.save_to_cache(mock_fact)
+    
+    # 2. Pastikan ada di cache
+    hit = await cache_service.find_similar_fact("Hujan itu air")
+    assert hit is not None
+    
+    # 3. Hapus cache
+    await cache_service.clear_all_cache()
+    
+    # 4. Pastikan sudah tidak ada
+    miss = await cache_service.find_similar_fact("Hujan itu air")
+    assert miss is None

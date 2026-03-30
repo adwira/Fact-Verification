@@ -50,14 +50,20 @@ class SerperTool(BaseTool):
 
 
 
-    def _run(self, query: str, limit: int = 5) -> str:
+    def _run(self, query: str, limit: int = 20) -> str:
         """Jalankan search secara sinkron (CrewAI memanggil run() dari dalam event loop)."""
 
         headers = {
             "X-API-KEY": self.api_key,
             "Content-Type": "application/json",
         }
-        payload = {"q": query, "gl": "id", "hl": "id", "num": limit}
+        payload = {
+            "q": query, 
+            "gl": "id", 
+            "hl": "id", 
+            "num": limit, 
+            "tbm": "nws"
+        }
 
         with httpx.Client() as client:
             try:

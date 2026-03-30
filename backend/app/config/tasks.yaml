@@ -2,17 +2,14 @@ generate_query_task:
   description: >
     Analisis klaim berikut secara semantik: "{claim}".
     
+    Anda memiliki akses ke alat pencarian (SerperTool).
     Tugas Anda: merancang strategi pencarian dan LANGSUNG menjalankan pencarian menggunakan 'SerperTool'.
-
+    PENTING: Jangan melompat ke "Final Answer" sebelum Anda memanggil SerperTool. Biarkan SerperTool yang memberikan data mentah kepada Anda, jangan buat URL palsu.
     Aturan pencarian:
     1. WAJIB membuat query dalam Bahasa Indonesia agar menemukan sumber media Indonesia.
-    2. Gunakan operator site: untuk menargetkan media terpercaya Indonesia, contoh:
-       site:kompas.com OR site:tempo.co OR site:cnnindonesia.com OR site:antaranews.com
-    3. Jika klaim terkait peristiwa terkini, tambahkan tahun (2025 atau 2024) di query
-       atau gunakan beberapa variasi kata kunci berbeda.
-    4. Lakukan MINIMAL 2 kali pencarian dengan variasi query yang berbeda untuk mendapatkan
+    2. Lakukan MINIMAL 1 kali pencarian dengan variasi query yang berbeda untuk mendapatkan
        cakupan sumber yang lebih luas.
-    5. Jangan hanya mencari klaim mentah — tambahkan sinonim, entitas terkait, atau
+    3. Jangan hanya mencari klaim mentah — tambahkan sinonim, entitas terkait, atau
        kata kunci konteks yang membantu verifikasi.
   expected_output: >
     Daftar URL LENGKAP (bukan hanya domain) dan cuplikan (snippet) dari hasil SerperTool.
@@ -28,6 +25,12 @@ gather_evidence_task:
     PRIORITASKAN scraping URL dari media Indonesia dan sumber terpercaya.
     Jika URL tidak bisa di-scrape (error/timeout), catat dan lanjut ke URL berikutnya.
     
+    Langkah Wajib:
+    1. GUNAKAN 'FirecrawlTool' untuk URL.
+    2. Analisis hasil teksnya. Jika isinya HANYA menu website (Login, Subscribe, error) atau halaman dialihkan keberita yang tidak relevan, segera GUNAKAN 'FirecrawlTool' lagi untuk URL kedua dan seterusnya.
+    3. Lakukan looping ini hingga Anda menemukan artikel berita yang memiliki konten paragraf yang utuh dan relevan dengan klaim "{claim}" di seluruh sources URL dari agent sebelumnya.
+    4. Saring informasinya: cari tanggal publikasi dan pernyataan yang secara eksplisit mendukung/membantah klaim.
+
     Filter informasi yang diambil:
     - Abaikan iklan, komentar pembaca, dan opini editorial.
     - Ambil: tanggal publikasi, nama media, kutipan narasumber resmi, data statistik.
@@ -37,7 +40,8 @@ gather_evidence_task:
     Susun menjadi ringkasan bukti (Evidence Brief) yang terstruktur.
   expected_output: >
     Ringkasan bukti dalam format Markdown dengan struktur:
-    - **Sumber**: [nama media] ([domain]) - [tanggal]
+    - **Sumber**: [Nama Media] - [tanggal]
+    - **URL Asli**: [Masukkan URL LENGKAP hasil scraping dari FirecrawlTool di sini. JANGAN POTONG URL-NYA]
     - **Poin Kunci**: [temuan utama yang relevan dengan klaim]
     Jika tidak ada sumber relevan yang berhasil di-scrape, nyatakan: "Bukti tidak mencukupi."
   agent: evidence_collector
@@ -54,14 +58,20 @@ verdict_determination_task:
     Tentukan status klaim: FAKTA, HOAKS, DISINFORMASI, atau TIDAK TERBUKTI.
 
     PENTING: Pada field "sources", HANYA cantumkan URL-nya secara eksplisit muncul
-    di hasil pencarian SerperTool pada tahap generate_query_task. Jangan menambahkan domain lain
+    di hasil scraping FirecrawlTool pada tahap generate_query_task. Jangan menambahkan domain lain
     berdasarkan pengetahuan umum Anda. Jika tidak ada URL dari sumber terverifikasi, isi dengan list kosong [].
   expected_output: >
+    HANYA keluarkan format JSON valid tanpa tambahan teks markdown apapun. 
+    ATURAN MULTAK UNTUK FIELD "sources": 
+    1. Anda bertindak sebagai COPY-PASTER. Anda HANYA BOLEH menyalin nilai dari field "URL Asli" di dalam Ringkasan Bukti (Evidence Brief) sebelumnya.
+    2. DILARANG KERAS MENCIPTAKAN/MENGARANG URL BARU.
+    3. Jika Ringkasan Bukti menyatakan "Bukti tidak mencukupi", maka HARUS kembalikan array kosong [].
+
     HANYA format JSON valid persis seperti ini:
     {
       "verdict": "FAKTA/HOAKS/DISINFORMASI",
       "confidence_score": 0.0 sampai 1.0,
       "explanation": "Penjelasan logis maksimal 5 kalimat.",
-      "sources": ["URL yang muncul di hasil SerperTool, contoh: kompas.com/politik/indoneisa"]
+      "sources": ["https://url-asli.com/berita1", "https://url-asli.com/berita2"]
     }
   agent: verdict_specialist

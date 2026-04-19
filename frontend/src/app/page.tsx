@@ -24,7 +24,7 @@ export default function Home() {
         <section className="mx-auto flex max-w-md flex-col items-center gap-4">
           <Link
             href="/verification"
-            className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-lg border-2 border-indigo-400/60 bg-transparent px-8 text-base font-medium text-white shadow-[0_0_20px_rgba(99,102,241,0.35)] transition-colors hover:bg-white/5"
+            className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-lg border-2 border-red-400/60 bg-transparent px-8 text-base font-medium text-white shadow-[0_0_20px_rgba(239,68,68,0.35)] transition-colors hover:bg-white/5"
           >
             <MessageCircle className="h-5 w-5" />
             Chat / Verifikasi

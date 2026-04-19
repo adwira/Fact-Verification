@@ -36,13 +36,13 @@ export function Header() {
         <div className="flex items-center gap-2">
           <Link
             href="/verification"
-            className="inline-flex h-9 items-center justify-center rounded-lg border border-indigo-400/60 bg-transparent px-4 text-sm font-medium text-white shadow-[0_0_15px_rgba(99,102,241,0.3)] transition-colors hover:bg-white/5"
+            className="inline-flex h-9 items-center justify-center rounded-lg border border-red-400/60 bg-transparent px-4 text-sm font-medium text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-colors hover:bg-white/5"
           >
             Chat
           </Link>
           <Link
             href="#signin"
-            className="inline-flex h-9 items-center justify-center rounded-lg border border-indigo-400/60 bg-transparent px-4 text-sm font-medium text-white shadow-[0_0_15px_rgba(99,102,241,0.3)] transition-colors hover:bg-white/5"
+            className="inline-flex h-9 items-center justify-center rounded-lg border border-red-400/60 bg-transparent px-4 text-sm font-medium text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-colors hover:bg-white/5"
           >
             Sign In
           </Link>

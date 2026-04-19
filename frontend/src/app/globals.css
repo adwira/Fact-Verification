@@ -12,26 +12,26 @@
 
 @layer base {
   :root {
-    /* VERIFAI dark theme - purple/blue gradient aesthetic */
-    --background: 240 20% 6%;
+    /* VERIFAI dark theme - High-tech Analytics Dashboard */
+    --background: 206 14% 10%;
     --foreground: 0 0% 98%;
-    --card: 240 15% 12%;
+    --card: 200 11% 16%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 15% 12%;
+    --popover: 200 11% 16%;
     --popover-foreground: 0 0% 98%;
-    --primary: 263 70% 58%;
+    --primary: 0 73% 42%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 12% 18%;
+    --secondary: 200 11% 16%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 10% 22%;
-    --muted-foreground: 240 5% 65%;
-    --accent: 240 12% 18%;
+    --muted: 200 11% 16%;
+    --muted-foreground: 215 25% 65%;
+    --accent: 200 11% 16%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 84% 60%;
+    --destructive: 0 73% 42%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 12% 22%;
-    --input: 240 12% 16%;
-    --ring: 243 75% 59%;
+    --border: 200 11% 20%;
+    --input: 200 11% 16%;
+    --ring: 0 73% 42%;
     --radius: 0.625rem;
     /* Verdict colors */
     --verdict-fakta: 142 76% 36%;
@@ -40,16 +40,14 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
   }
   html {
-    @apply bg-[#0B0A15];
+    @apply bg-background;
   }
   body {
-    @apply bg-gradient-to-b from-[#0B0A15] via-[#1a1533] to-[#3d3580] min-h-screen text-foreground;
+    @apply bg-background min-h-screen text-foreground;
   }
 }

@@ -10,7 +10,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         outline:
-          "border border-indigo-400/60 bg-transparent text-white shadow-[0_0_15px_rgba(99,102,241,0.3)] hover:bg-white/5",
+          "border border-red-400/60 bg-transparent text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:bg-white/5",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",

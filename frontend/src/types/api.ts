@@ -1,6 +1,7 @@
 // Maps to VerificationRequest in backend
 export interface VerificationRequest {
   claim: string;
+  bypass_cache?: boolean;
 }
 
 // Maps to VerificationResponse in backend

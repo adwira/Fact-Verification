@@ -150,6 +150,47 @@ class FactCheckerCrew:
     full_path = os.path.join(base_path, path)
     with open(full_path, 'r') as f:
       return yaml.safe_load(f)
+
+  def inspect_prompts(self):
+    print("\n\n" + "="*50)
+    print("🔍 INSPEKSI PROMPT CREWAI 🔍")
+    print("="*50)
+    
+    try:
+        from crewai.utilities.prompts import Prompts
+        agents = [self.query_optimizer(), self.evidence_collector(), self.verdict_specialist()]
+        tasks = [self.generate_query_task(), self.gather_evidence_task(), self.verdict_determination_task()]
+        
+        for idx, (agent, task) in enumerate(zip(agents, tasks)):
+            print(f"\n🚀 AGEN {idx + 1}: {agent.role}")
+            
+            prompt_generator = Prompts(
+                agent=agent,
+                has_tools=len(agent.tools) > 0,
+                use_system_prompt=agent.use_system_prompt
+            )
+
+            generated_prompt = prompt_generator.task_execution()
+
+            if "system" in generated_prompt:
+                print("\n=== SYSTEM PROMPT ===")
+                print(generated_prompt["system"])
+                print("\n=== USER PROMPT ===")
+                print(generated_prompt["user"])
+            elif "prompt" in generated_prompt:
+                print("\n=== COMPLETE PROMPT ===")
+                print(generated_prompt["prompt"])
+            else:
+                print(generated_prompt)
+
+            print("\n=== TASK CONTEXT ===")
+            print(f"Task Description: {task.description}")
+            print(f"Expected Output: {task.expected_output}")
+            print("-" * 50)
+    except Exception as e:
+        print(f"⚠️ Gagal menginspeksi prompt: {e}")
+        
+    print("="*50 + "\n\n")
   
   # Execution
   def run_validation(self, inputs):
@@ -161,6 +202,8 @@ class FactCheckerCrew:
     return validator_crew.kickoff(inputs=inputs)
   
   def run_verification(self, inputs):
+    self.inspect_prompts() # <--- Memanggil inspeksi dinamis sebelum kickoff
+    
     verification_crew = Crew(
       agents=[
         self.query_optimizer(),

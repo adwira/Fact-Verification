@@ -5,6 +5,7 @@ from pydantic import Field
 
 from app.core.config import settings
 from app.api.errors import AppBaseException
+from app.services.agent_event import agent_event_queue
 
 # Batas karakter untuk konten scrape (agar agent tidak kebanjiran teks)
 MAX_CONTENT_CHARS = 14_000
@@ -56,6 +57,10 @@ class FirecrawlTool(BaseTool):
 
     def _run(self, target_url: str) -> str:
         """Scrape hanya konten utama, dibersihkan dan dibatasi ukurannya."""
+        q = agent_event_queue.get()
+        if q:
+            q.put({"type": "log", "message": f"Membaca konten dari sumber domain: {target_url}"})
+
         headers = {
             "Authorization": f"Bearer {settings.FIRECRAWL_API_KEY}",
             "Content-Type": "application/json",

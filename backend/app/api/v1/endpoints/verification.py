@@ -1,6 +1,10 @@
 import json
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
+import asyncio
+from queue import Queue, Empty
+from app.services.agent_event import agent_event_queue
 from app.schemas.verification import VerificationRequest, VerificationResponse
 from app.services.cache_service import CacheService
 from app.services.agent_service import FactCheckerCrew
@@ -34,81 +38,99 @@ def get_cache_service():
 def get_agent_service():
     return FactCheckerCrew(experiment_type="cot")
 
-@router.post("/verify", response_model=VerificationResponse)
+@router.post("/verify")
 async def verify_claim(
   request: VerificationRequest,
   cache_service: CacheService = Depends(get_cache_service),
   agent_service: FactCheckerCrew = Depends(get_agent_service)
 ):
-  
-  cache_result = await cache_service.find_similar_fact(request.claim)
-  
-  if cache_result:
-    return cache_result
-    # raise AppBaseException("Klaim belum pernah diverifikasi. Agent akan dijalankan di tahap berikutnya.", status_code=404)
+    async def sse_generator():
+        q = Queue()
+        agent_event_queue.set(q)
+        
+        if not request.bypass_cache:
+            cache_result = await cache_service.find_similar_fact(request.claim)
+            if cache_result:
+                yield f"data: {json.dumps({'type': 'result', 'payload': cache_result.model_dump()})}\n\n"
+                return
 
-  try:
-    validation_output = agent_service.run_validation(inputs={'claim': request.claim})
-  except Exception as e:
-    if _is_gemini_quota_error(e):
-      raise AppBaseException(
-        message=(
-          "Kuota Gemini API habis atau melebihi batas. "
-          "Tunggu beberapa menit lalu coba lagi, atau periksa billing di Google AI Studio."
-        ),
-        status_code=503,
-      )
-    raise
+        yield f"data: {json.dumps({'type': 'log', 'message': 'Menganalisis dan memvalidasi input...'})}\n\n"
+        
+        try:
+            validation_output = await asyncio.to_thread(
+                agent_service.run_validation, inputs={'claim': request.claim}
+            )
+        except Exception as e:
+            if _is_gemini_quota_error(e):
+                err = "Kuota Gemini API habis atau melebihi batas. Tunggu beberapa menit lalu coba lagi."
+            else:
+                err = f"Error validasi: {str(e)}"
+            yield f"data: {json.dumps({'type': 'error', 'message': err})}\n\n"
+            return
+            
+        try:
+            raw_val = extract_json_from_raw(validation_output.raw)
+            val_data = json.loads(raw_val)
 
-  try:
-    raw_val = extract_json_from_raw(validation_output.raw)
-    val_data = json.loads(raw_val)
+            if not val_data.get("is_valid_claim", False):
+                reason = val_data.get('reason', 'Input Tidak Valid')
+                yield f"data: {json.dumps({'type': 'error', 'message': f'Input Ditolak: {reason}'})}\n\n"
+                return
+        except json.JSONDecodeError:
+            yield f"data: {json.dumps({'type': 'error', 'message': 'Gagal memvalidasi input (Format Validator Error).'})}\n\n"
+            return
+            
+        yield f"data: {json.dumps({'type': 'log', 'message': 'Input valid. AI Agent mulai melakukan riset...'})}\n\n"
 
-    if not val_data.get("is_valid_claim", False):
-      raise AppBaseException(
-        message=f"Input Ditolak: {val_data.get('reason', 'Input Tidak Valid')}",
-        status_code=400
-      )
+        verification_task = asyncio.create_task(
+            asyncio.to_thread(agent_service.run_verification, inputs={'claim': request.claim})
+        )
+        
+        while not verification_task.done():
+            try:
+                while True:
+                    msg = q.get_nowait()
+                    yield f"data: {json.dumps(msg)}\n\n"
+            except Empty:
+                pass
+            await asyncio.sleep(0.5)
 
-  except json.JSONDecodeError:
-    # Jika validator gagal memberikan JSON, kita log tapi mungkin lanjut jika darurat (atau stop jika ketat)
-    # Untuk sekarang kita stop karena validator itu penting
-    raise AppBaseException("Gagal memvalidasi input (Format Validator Error).", status_code=500)
+        while not q.empty():
+            msg = q.get_nowait()
+            yield f"data: {json.dumps(msg)}\n\n"
 
-  try:
-    crew_output = agent_service.run_verification(inputs={'claim': request.claim})
-  except Exception as e:
-    if _is_gemini_quota_error(e):
-      raise AppBaseException(
-        message=(
-          "Kuota Gemini API habis atau melebihi batas. "
-          "Tunggu beberapa menit lalu coba lagi, atau periksa billing di Google AI Studio."
-        ),
-        status_code=503,
-      )
-    raise
+        try:
+            crew_output = verification_task.result()
+        except Exception as e:
+            if _is_gemini_quota_error(e):
+                err = "Kuota Gemini API habis atau melebihi batas."
+            else:
+                err = f"Terjadi kesalahan saat memverifikasi: {str(e)}"
+            yield f"data: {json.dumps({'type': 'error', 'message': err})}\n\n"
+            return
 
-  try:
-    raw_final = extract_json_from_raw(crew_output.raw)
-    final_data = json.loads(raw_final)
+        try:
+            raw_final = extract_json_from_raw(crew_output.raw)
+            final_data = json.loads(raw_final)
 
-    response_data = VerificationResponse(
-      claim=request.claim,
-      verdict=final_data.get("verdict", "Tidak Terbukti"),
-      confidence_score=final_data.get("confidence_score", 0.0),
-      explanation=final_data.get("explanation", ""),
-      sources=final_data.get("sources", []),
-      verified_at=datetime.now().isoformat()
-    )
+            response_data = VerificationResponse(
+                claim=request.claim,
+                verdict=final_data.get("verdict", "Tidak Terbukti"),
+                confidence_score=final_data.get("confidence_score", 0.0),
+                explanation=final_data.get("explanation", ""),
+                sources=final_data.get("sources", []),
+                verified_at=datetime.now().isoformat()
+            )
 
-    await cache_service.save_to_cache(response_data)
+            await cache_service.save_to_cache(response_data)
+            yield f"data: {json.dumps({'type': 'result', 'payload': response_data.model_dump()})}\n\n"
 
-    return response_data
+        except json.JSONDecodeError:
+            yield f"data: {json.dumps({'type': 'error', 'message': 'Gagal memproses hasil dari AI Agent (Format Error).'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': f'Terjadi kesalahan sistem: {str(e)}'})}\n\n"
 
-  except json.JSONDecodeError:
-    raise AppBaseException("Gagal memproses hasil dari AI Agent (Format Error).", status_code=500)
-  except Exception as e:
-    raise AppBaseException(f"Terjadi kesalahan sistem: {str(e)}", status_code=500)
+    return StreamingResponse(sse_generator(), media_type="text/event-stream")
 
 @router.delete("/cache")
 async def delete_cache(

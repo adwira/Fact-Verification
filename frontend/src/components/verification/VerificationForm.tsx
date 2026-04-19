@@ -30,10 +30,10 @@ export function VerificationForm({
   const [result, setResult] = useState<VerificationResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loadingStep, setLoadingStep] = useState(0);
+  const [progressLog, setProgressLog] = useState<string | null>(null);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
+  const executeVerification = useCallback(
+    async (bypassCache: boolean = false) => {
       const trimmed = claim.trim();
       if (trimmed.length < MIN_CLAIM_LENGTH) {
         setErrorMessage(
@@ -41,11 +41,12 @@ export function VerificationForm({
         );
         setStatus("error");
         return;
-        }
+      }
       setErrorMessage(null);
       setStatus("loading");
       setResult(null);
       setLoadingStep(0);
+      setProgressLog(null);
 
       const steps = [0, 1, 2];
       const stepInterval = setInterval(() => {
@@ -57,7 +58,9 @@ export function VerificationForm({
       }, 2500);
 
       try {
-        const data = await verifyClaim(trimmed);
+        const data = await verifyClaim(trimmed, bypassCache, (msg) => {
+          setProgressLog(msg);
+        });
         clearInterval(stepInterval);
         setLoadingStep(2);
         setResult(data);
@@ -69,6 +72,14 @@ export function VerificationForm({
       }
     },
     [claim]
+  );
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      await executeVerification(false);
+    },
+    [executeVerification]
   );
 
   const handleReset = useCallback(() => {
@@ -93,7 +104,7 @@ export function VerificationForm({
               "min-h-[140px] resize-y text-base border-2 transition-colors",
               status === "error"
                 ? "border-destructive focus-visible:ring-destructive"
-                : "border-indigo-500/40 focus-visible:ring-ring",
+                : "border-red-500/40 focus-visible:ring-ring",
               textareaClassName
             )}
             aria-invalid={status === "error"}
@@ -103,22 +114,34 @@ export function VerificationForm({
             id="claim-hint"
             className="mt-1.5 text-right text-xs text-muted-foreground"
           >
-            {claim.length} / {MIN_CLAIM_LENGTH} karakter
+            {claim.length} karakter (Minimal {MIN_CLAIM_LENGTH} karakter)
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button
-            type="submit"
-            size="lg"
-            disabled={status === "loading" || claim.trim().length < MIN_CLAIM_LENGTH}
-            className="min-w-[140px]"
-          >
-            {status === "loading" ? "Memverifikasi..." : "Verify"}
-          </Button>
+          {status !== "success" && status !== "error" && (
+            <Button
+              type="submit"
+              size="lg"
+              disabled={status === "loading" || claim.trim().length < MIN_CLAIM_LENGTH}
+              className="min-w-[140px] rounded-xl"
+            >
+              {status === "loading" ? "Memverifikasi..." : "Verify"}
+            </Button>
+          )}
           {(status === "success" || status === "error") && (
             <Button type="button" variant="outline" size="lg" onClick={handleReset}>
               Verifikasi lagi
+            </Button>
+          )}
+          {status === "success" && result?.is_from_cache && (
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              onClick={() => executeVerification(true)}
+            >
+              Verifikasi Tanpa Cache
             </Button>
           )}
         </div>
@@ -139,7 +162,16 @@ export function VerificationForm({
       )}
 
       {status === "loading" && (
-        <LoadingSteps currentStep={loadingStep} className="mt-6" />
+        <div className="mt-6 space-y-4">
+          <LoadingSteps currentStep={loadingStep} />
+          {progressLog && (
+            <div className="flex justify-center">
+              <span className="text-sm font-medium text-red-300 animate-pulse bg-red-900/30 px-4 py-2 rounded-full border border-red-500/20">
+                {progressLog}
+              </span>
+            </div>
+          )}
+        </div>
       )}
 
       {status === "success" && result && (

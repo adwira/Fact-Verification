@@ -15,3 +15,6 @@ pydantic>=2.6.0
 pydantic-settings>=2.2.1    # Dibutuhkan untuk BaseSettings di config.py
 python-dotenv>=1.0.1
 httpx>=0.27.0               # Dibutuhkan untuk HTTP request di Custom Tools
+
+sentence-transformers>=2.2.2
+torch>=2.0.0

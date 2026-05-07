@@ -4,7 +4,7 @@ import type {
   ApiError,
 } from "@/types/api";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.verify.adwira.dev";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api-verify.adwira.dev";
 
 export async function verifyClaim(
   claim: string,

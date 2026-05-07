@@ -9,7 +9,6 @@ class Settings(BaseSettings):
   # API Keys
   SERPER_API_KEY: str
   FIRECRAWL_API_KEY: str
-  OPENAI_API_KEY: str
   GEMINI_API_KEY: str
   
   # Konfigurasi Database/Cache

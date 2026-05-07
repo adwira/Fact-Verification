@@ -10,7 +10,7 @@ import type { VerificationResponse } from "@/types/api";
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const MIN_CLAIM_LENGTH = 50;
+
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -21,7 +21,7 @@ interface VerificationFormProps {
 }
 
 export function VerificationForm({
-  placeholder = "Ketik atau tempel klaim berita di sini (min. 100 karakter)...",
+  placeholder = "Ketik atau tempel klaim berita di sini...",
   className,
   textareaClassName,
 }: VerificationFormProps = {}) {
@@ -35,10 +35,8 @@ export function VerificationForm({
   const executeVerification = useCallback(
     async (bypassCache: boolean = false) => {
       const trimmed = claim.trim();
-      if (trimmed.length < MIN_CLAIM_LENGTH) {
-        setErrorMessage(
-          `Klaim minimal ${MIN_CLAIM_LENGTH} karakter. Saat ini: ${trimmed.length} karakter.`
-        );
+      if (trimmed.length === 0) {
+        setErrorMessage("Klaim tidak boleh kosong.");
         setStatus("error");
         return;
       }
@@ -114,7 +112,7 @@ export function VerificationForm({
             id="claim-hint"
             className="mt-1.5 text-right text-xs text-muted-foreground"
           >
-            {claim.length} karakter (Minimal {MIN_CLAIM_LENGTH} karakter)
+            {claim.length} karakter
           </p>
         </div>
 
@@ -123,7 +121,7 @@ export function VerificationForm({
             <Button
               type="submit"
               size="lg"
-              disabled={status === "loading" || claim.trim().length < MIN_CLAIM_LENGTH}
+              disabled={status === "loading" || claim.trim().length === 0}
               className="min-w-[140px] rounded-xl"
             >
               {status === "loading" ? "Memverifikasi..." : "Verify"}

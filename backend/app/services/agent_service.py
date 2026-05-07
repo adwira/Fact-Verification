@@ -5,17 +5,13 @@ from app.services.tools.serper_tools import SerperTool
 from app.services.tools.firecrawl_tools import FirecrawlTool
 import os
 
-# Direktori config: app/config/ (satu level di atas app/services/)
+# Direktori config: app/config/ (sxatu level di atas app/services/)
 _CONFIG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config")
 
 # Tools (instance BaseTool agar kompatibel dengan CrewAI Agent)
 serper_tool = SerperTool()
 firecrawl_tool = FirecrawlTool()
 
-# LLM: wajib provider="gemini" agar pakai Google GenAI (bukan fallback OpenAI)
-# Pakai model Gemini (bukan Gemma): Gemma 3 27B tidak mendukung "developer instruction" / system prompt yang dipakai CrewAI.
-
-# Pengaturan keamanan agar Gemini tidak memblokir query terkait kekerasan (mis. pembacokan)
 GEMINI_SAFETY_SETTINGS = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -103,7 +99,7 @@ class FactCheckerCrew:
       verbose=True,
       # system_template=CUSTOM_SYSTEM_TEMPLATE,
       # prompt_template=CUSTOM_PROMPT_TEMPLATE,
-      # use_system_prompt=True
+      use_system_prompt=True
     )
     
   @agent
@@ -115,7 +111,7 @@ class FactCheckerCrew:
       verbose=True,
       # system_template=CUSTOM_SYSTEM_TEMPLATE,
       # prompt_template=CUSTOM_PROMPT_TEMPLATE,
-      # use_system_prompt=True
+      use_system_prompt=True
     )
     
   @agent

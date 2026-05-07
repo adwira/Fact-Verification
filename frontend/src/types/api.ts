@@ -19,6 +19,7 @@ export interface VerificationResponse {
   sources: string[];
   verified_at?: string;
   is_from_cache?: boolean;
+  execution_time?: number;
 }
 
 // Backend AppBaseException response

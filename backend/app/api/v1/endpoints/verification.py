@@ -3,12 +3,13 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 import asyncio
+import time
 from queue import Queue, Empty
 from app.services.agent_event import agent_event_queue
 from app.schemas.verification import VerificationRequest, VerificationResponse
 from app.services.cache_service import CacheService
 from app.services.agent_service import FactCheckerCrew
-from app.api.errors import AppBaseException
+from app.api.errors import AppBaseException, CacheException
 
 router = APIRouter()
 
@@ -45,12 +46,14 @@ async def verify_claim(
   agent_service: FactCheckerCrew = Depends(get_agent_service)
 ):
     async def sse_generator():
+        start_time = time.perf_counter()
         q = Queue()
         agent_event_queue.set(q)
         
         if not request.bypass_cache:
             cache_result = await cache_service.find_similar_fact(request.claim)
             if cache_result:
+                cache_result.execution_time = time.perf_counter() - start_time
                 yield f"data: {json.dumps({'type': 'result', 'payload': cache_result.model_dump()})}\n\n"
                 return
 
@@ -119,7 +122,8 @@ async def verify_claim(
                 confidence_score=final_data.get("confidence_score", 0.0),
                 explanation=final_data.get("explanation", ""),
                 sources=final_data.get("sources", []),
-                verified_at=datetime.now().isoformat()
+                verified_at=datetime.now().isoformat(),
+                execution_time=time.perf_counter() - start_time
             )
 
             await cache_service.save_to_cache(response_data)
@@ -136,5 +140,8 @@ async def verify_claim(
 async def delete_cache(
   cache_service: CacheService = Depends(get_cache_service)
 ):
-  await cache_service.clear_all_cache()
-  return {"message": "Seluruh cache berhasil dihapus"}
+  try:
+    await cache_service.clear_all_cache()
+    return {"message": "Seluruh cache berhasil dihapus"}
+  except Exception:
+    raise CacheException(message="Internal server error", status_code=500)

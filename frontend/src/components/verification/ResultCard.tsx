@@ -3,7 +3,7 @@
 import type { VerificationResponse } from "@/types/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ExternalLink, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { ExternalLink, CheckCircle2, XCircle, AlertCircle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function getVerdictStyle(verdict: string): {
@@ -76,6 +76,12 @@ export function ResultCard({ data, className }: ResultCardProps) {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
+            </span>
+          )}
+          {data.execution_time !== undefined && (
+            <span className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              {data.execution_time.toFixed(1)} detik
             </span>
           )}
         </div>

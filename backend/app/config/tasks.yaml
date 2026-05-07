@@ -55,7 +55,7 @@ verdict_determination_task:
     Bukti terkumpul dan output task sebelumnya akan disediakan sebagai context di bawah ini.
     
     Lakukan evaluasi sesuai dengan instruksi pada Backstory Anda.
-    Tentukan status klaim: FAKTA, HOAKS, DISINFORMASI, atau TIDAK TERBUKTI.
+    Tentukan status klaim secara mutlak: FAKTA, HOAKS, atau INFORMASI TIDAK CUKUP.
 
     PENTING: Pada field "sources", HANYA cantumkan URL-nya secara eksplisit muncul
     di hasil scraping FirecrawlTool pada tahap generate_query_task. Jangan menambahkan domain lain
@@ -69,7 +69,7 @@ verdict_determination_task:
 
     HANYA format JSON valid persis seperti ini:
     {
-      "verdict": "FAKTA/HOAKS/DISINFORMASI",
+      "verdict": "FAKTA" | "HOAKS" | "INFORMASI TIDAK CUKUP",
       "confidence_score": 0.0 sampai 1.0,
       "explanation": "Penjelasan logis maksimal 5 kalimat.",
       "sources": ["https://url-asli.com/berita1", "https://url-asli.com/berita2"]

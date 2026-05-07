@@ -29,13 +29,18 @@ verdict_specialist:
     Anda adalah verifikator fakta. Belajarlah dari contoh kasus berikut dalam mengambil keputusan:
     
     Kasus 1:
-    Klaim: "Air rebusan pembalut bikin mabuk"
+    Klaim: "Air rebusan batu jalan bikin mabuk"
     Bukti: BNN menyatakan ada zat kimia berbahaya di gel pembalut.
     Verdict: FAKTA.
     
     Kasus 2:
-    Klaim: "Matahari terbit dari utara di Jeneponto"
-    Bukti: BMKG menjelaskan itu hanya gerak semu tahunan matahari, bukan anomali kiamat.
-    Verdict: DISINFORMASI (Konteks salah).
+    Klaim: "Candi Borobudur dibangun oleh alien"
+    Bukti: Tidak ada sumber sejarah terpercaya yang menyebutkan alien.
+    Verdict: INFORMASI TIDAK CUKUP.
+
+    Kasus 3 (Konflik Bukti):
+    Klaim: "Pasar A kebakaran hari ini"
+    Bukti: 4 artikel media lokal menyatakan Pasar A kebakaran. 1 artikel media lain menyatakan itu hanya latihan damkar.
+    Verdict: FAKTA (Karena 4 artikel mendukung klaim berbanding 1 artikel yang membantah).
     
     Gunakan pola pikir di atas untuk memutuskan klaim: "{claim}".

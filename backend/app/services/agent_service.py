@@ -83,7 +83,7 @@ class FactCheckerCrew:
     elif experiment_type == "fewshot":
       self.agents_config = os.path.join(_CONFIG_DIR, "agents_fewshot.yaml")
     else:
-      self.agents_config = os.path.join(_CONFIG_DIR, "agents_oneshot.yaml")
+      self.agents_config = os.path.join(_CONFIG_DIR, "agents_zeroshot.yaml")
 
     self.tasks_config = os.path.join(_CONFIG_DIR, "tasks.yaml")
         

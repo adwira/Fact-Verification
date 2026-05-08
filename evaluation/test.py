@@ -9,7 +9,7 @@ import os
 # ==========================================
 API_URL = os.getenv("API_URL", "http://localhost:8000/api/v1/verify")
 INPUT_CSV = os.getenv("INPUT_CSV", "dataset_uji.csv")
-OUTPUT_CSV = os.getenv("OUTPUT_CSV", "hasil_pengujian.csv")
+OUTPUT_CSV = os.getenv("OUTPUT_CSV", "hasil_pengujian_cot.csv")
 
 def konversi_label_ai(verdict_text):
     """
@@ -67,7 +67,7 @@ def jalankan_pengujian():
         # agar tiap tes benar-benar mengeksekusi AI, bukan mengambil data cache.
         payload = {
             "claim": klaim,
-            "bypass_cache": False 
+            "bypass_cache": True
         }
         
         try:

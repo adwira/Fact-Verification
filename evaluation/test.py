@@ -2,13 +2,14 @@ import pandas as pd
 import requests
 import json
 import time
+import os
 
 # ==========================================
 # KONFIGURASI PENGUJIAN
 # ==========================================
-API_URL = "http://localhost:8000/api/v1/verify"
-INPUT_CSV = "dataset_uji.csv"
-OUTPUT_CSV = "hasil_pengujian.csv"
+API_URL = os.getenv("API_URL", "http://localhost:8000/api/v1/verify")
+INPUT_CSV = os.getenv("INPUT_CSV", "dataset_uji.csv")
+OUTPUT_CSV = os.getenv("OUTPUT_CSV", "hasil_pengujian.csv")
 
 def konversi_label_ai(verdict_text):
     """

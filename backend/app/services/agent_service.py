@@ -12,12 +12,12 @@ _CONFIG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 serper_tool = SerperTool()
 firecrawl_tool = FirecrawlTool()
 
-GEMINI_SAFETY_SETTINGS = [
-    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-]
+GEMINI_SAFETY_SETTINGS = {
+    "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
+    "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE",
+    "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
+    "HARM_CATEGORY_DANGEROUS_CONTENT": "BLOCK_NONE",
+}
 flash_llm = LLM(
   model="gemini-2.5-flash",
   api_key=settings.GEMINI_API_KEY,

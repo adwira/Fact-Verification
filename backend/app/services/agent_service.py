@@ -38,7 +38,7 @@ flash_llm = LLM(
   api_key=settings.GEMINI_API_KEY,
   temperature=0.5,
   provider="gemini",
-  safety_settings=GEMINI_SAFETY_SETTINGS,
+  # safety_settings=GEMINI_SAFETY_SETTINGS,
 )
 
 pro_llm = LLM(
@@ -46,7 +46,7 @@ pro_llm = LLM(
   api_key=settings.GEMINI_API_KEY,
   temperature=0.2,
   provider="gemini",
-  safety_settings=GEMINI_SAFETY_SETTINGS,
+  # safety_settings=GEMINI_SAFETY_SETTINGS,
 )
 
 # Templates Kustom untuk mematikan instruksi bawaan crewAI

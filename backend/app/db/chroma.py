@@ -1,29 +1,32 @@
 import chromadb
 from chromadb import EmbeddingFunction, Embeddings, Documents
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from ..core.config import settings
 
-# Inisialisasi Gemini API sekali saja saat modul dimuat
-genai.configure(api_key=settings.GEMINI_API_KEY)
+# Inisialisasi Gemini Client sekali saja saat modul dimuat (Gen AI SDK terbaru)
+_gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
 
 class GeminiEmbeddingFunction(EmbeddingFunction):
   """
-  Custom embedding function yang menggunakan Google Gemini Embedding API.
-  Jauh lebih hemat memori dibandingkan model lokal (sentence-transformers + torch)
-  karena komputasi dilakukan sepenuhnya di sisi Google.
-  Model: text-embedding-004 (dimensi: 768)
+  Custom embedding function menggunakan Google Gemini Embedding API.
+  Menggunakan Gen AI SDK terbaru (google.genai) sesuai dokumentasi resmi.
+  - Model: gemini-embedding-001
+  - Task type: SEMANTIC_SIMILARITY (untuk pencarian cache klaim yang mirip)
+  - Output dimensi: 3072 (default)
+  Tidak memerlukan library berat seperti torch/sentence-transformers karena
+  komputasi dilakukan sepenuhnya di sisi server Google.
   """
   def __call__(self, input: Documents) -> Embeddings:
-    embeddings = []
-    for text in input:
-      response = genai.embed_content(
-        model="models/text-embedding-004",
-        content=text,
-        task_type="SEMANTIC_SIMILARITY",
-      )
-      embeddings.append(response["embedding"])
-    return embeddings
+    # Embed sekaligus dalam satu batch request untuk efisiensi
+    result = _gemini_client.models.embed_content(
+      model="gemini-embedding-001",
+      contents=input,
+      config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY"),
+    )
+    # Ambil nilai vektor dari setiap objek embedding
+    return [embedding.values for embedding in result.embeddings]
 
 
 # Instance embedding function (dibuat sekali, digunakan berulang)

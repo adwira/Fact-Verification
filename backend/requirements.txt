@@ -5,7 +5,7 @@ uvicorn[standard]>=0.27.0
 # --- AI Agent Framework (Core) ---
 crewai>=0.28.8
 crewai-tools>=0.1.6
-google-generativeai>=0.5.2  # Untuk provider Gemini di CrewAI + Gemini Embedding API (ChromaDB)
+google-genai>=0.8.0         # Gen AI SDK terbaru (menggantikan google-generativeai)
 
 # --- Vector Database (Cache) ---
 chromadb>=0.4.24

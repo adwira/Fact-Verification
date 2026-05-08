@@ -5,7 +5,7 @@ uvicorn[standard]>=0.27.0
 # --- AI Agent Framework (Core) ---
 crewai>=0.28.8
 crewai-tools>=0.1.6
-google-generativeai>=0.5.2  # Untuk provider Gemini di CrewAI
+google-generativeai>=0.5.2  # Untuk provider Gemini di CrewAI + Gemini Embedding API (ChromaDB)
 
 # --- Vector Database (Cache) ---
 chromadb>=0.4.24
@@ -15,6 +15,3 @@ pydantic>=2.6.0
 pydantic-settings>=2.2.1    # Dibutuhkan untuk BaseSettings di config.py
 python-dotenv>=1.0.1
 httpx>=0.27.0               # Dibutuhkan untuk HTTP request di Custom Tools
-
-sentence-transformers>=2.2.2
-torch>=2.0.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu

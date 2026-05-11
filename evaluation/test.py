@@ -9,7 +9,7 @@ import os
 # ==========================================
 API_URL = os.getenv("API_URL", "http://localhost:8000/api/v1/verify")
 INPUT_CSV = os.getenv("INPUT_CSV", "dataset_uji.csv")
-OUTPUT_CSV = os.getenv("OUTPUT_CSV", "hasil_pengujian_fewshot.csv")
+OUTPUT_CSV = os.getenv("OUTPUT_CSV", "hasil_pengujian_zeroshot.csv")
 
 def konversi_label_ai(verdict_text):
     """

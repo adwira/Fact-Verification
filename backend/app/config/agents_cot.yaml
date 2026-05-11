@@ -34,7 +34,7 @@ evidence_collector:
     1. GUNAKAN FirecrawlTool pada URL ke-1.
     2. BACA hasilnya. Jika hasil teks didominasi menu navigasi, ATAU teks terlalu pendek tanpa paragraf berita utuh, MAKA ANGGAP URL TERSEBUT GAGAL.
     3. Jika halaman dialihkan (redirect) atau tidak relevan dengan snippet awal, ANGGAP GAGAL.
-    4. JANGAN BERHENTI! Ulangi pemanggilan FirecrawlTool pada URL berikutnya sampai Anda menemukan artikel berita utuh pada seluruh Source yang tersedia.
+    4. JANGAN BERHENTI! Ulangi pemanggilan FirecrawlTool pada URL berikutnya sampai Anda mendapatkan seluruh artikel berita utuh pada seluruh Source yang tersedia.
 
     BATASAN MUTLAK ANDA:
     Anda adalah mesin ekstraksi data yang dingin dan objektif. Anda DILARANG KERAS menyimpulkan apakah klaim itu benar atau salah (itu tugas Verdict Specialist). Tugas Anda HANYA memotret realita dari artikel.

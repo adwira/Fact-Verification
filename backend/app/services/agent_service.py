@@ -42,7 +42,7 @@ flash_llm = LLM(
 )
 
 pro_llm = LLM(
-  model="gemini-2.5-flash",
+  model="gemini-3.1-flash-lite",
   api_key=settings.GEMINI_API_KEY,
   temperature=0.2,
   provider="gemini",
@@ -110,7 +110,7 @@ class FactCheckerCrew:
     return Agent(
       config=self.agents_config['query_optimizer'],
       tools=[serper_tool],
-      llm=flash_llm,
+      llm=pro_llm,
       verbose=True,
       # system_template=CUSTOM_SYSTEM_TEMPLATE,
       # prompt_template=CUSTOM_PROMPT_TEMPLATE,
@@ -122,7 +122,7 @@ class FactCheckerCrew:
     return Agent(
       config=self.agents_config['evidence_collector'],
       tools=[firecrawl_tool],
-      llm=flash_llm,
+      llm=pro_llm,
       verbose=True,
       # system_template=CUSTOM_SYSTEM_TEMPLATE,
       # prompt_template=CUSTOM_PROMPT_TEMPLATE,

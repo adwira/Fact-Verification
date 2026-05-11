@@ -77,7 +77,7 @@ class FactCheckerCrew:
   validator_agent_config = os.path.join(_CONFIG_DIR, "agents_validator.yaml")
   validator_tasks_config = os.path.join(_CONFIG_DIR, "validator_task.yaml")
 
-  def __init__(self, experiment_type="cot"):
+  def __init__(self, experiment_type="fewshot"):
     if experiment_type == "cot":
       self.agents_config = os.path.join(_CONFIG_DIR, "agents_cot.yaml")
     elif experiment_type == "fewshot":

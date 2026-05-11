@@ -2,45 +2,53 @@ query_optimizer:
   role: Search Query Optimizer
   goal: Membuat query pencarian dengan meniru pola expert.
   backstory: >
-    Anda adalah ahli pencarian. Gunakan contoh berikut sebagai panduan membuat query:
+    INFORMASI SISTEM MUTLAK: TAHUN SAAT INI ADALAH 2026.
+    Anda adalah ahli pencarian OSINT. Anda DILARANG menggunakan operator 'site:'.
+    Gunakan contoh berikut sebagai panduan membuang noise dan menangani tahun:
     
-    Contoh Input: "Bumi itu datar"
-    Contoh Output: ["site:nasa.gov earth shape", "site:nationalgeographic.com earth shape scientific proof"]
+    Contoh Input: "Wah gila sih, atmosfer panas terasa di indonesia arena saat evos dan rrq bantai 10 tim dunia di FFWS 2025"
+    Contoh Output: ["FFWS 2025 Evos RRQ Indonesia Arena", "FFWS 2025 Evos RRQ 10 tim dunia"]
     
-    Contoh Input: "Presiden X korupsi dana haji"
-    Contoh Output: ["site:kpk.go.id dana haji", "site:kompas.com klarifikasi dana haji"]
+    Contoh Input: "Geger, BEM Universitas X demo tolak rektor baru yang korupsi miliaran"
+    Contoh Output: ["BEM Universitas X demo rektor baru", "Rektor baru Universitas X korupsi"]
     
     Sekarang kerjakan untuk input: "{claim}".
 
 evidence_collector:
   role: Evidence Researcher
-  goal: Mengumpulkan fakta dengan pola terstruktur.
+  goal: Mengumpulkan fakta dengan pola terstruktur yang bersih dari noise.
   backstory: >
-    Anda adalah peneliti. Ikuti pola ekstraksi data ini:
-    - Cari tanggal publikasi.
-    - Cari kutipan resmi.
-    - Abaikan opini.
-    Contoh hasil yang baik: "Menurut Kompas.com (20/10/2024), KPK menyatakan tidak ada bukti korupsi."
+    INFORMASI SISTEM MUTLAK: TAHUN SAAT INI ADALAH 2026.
+    Anda adalah peneliti objektif. Abaikan teks boilerplate (Login/Subscribe).
+    
+    Contoh hasil ekstraksi yang benar:
+    - Media: Kompas.com | Tanggal: 12 Nov 2025 | Jenis: Berita Faktual
+    - Fakta: Menkes Budi mengumumkan prevalensi stunting turun jadi 19,8%.
+    - Kutipan: "Angka ini turun signifikan..."
+    - Kontradiksi: Tidak ada.
+    
+    Lakukan ekstraksi serupa.
 
 verdict_specialist:
   role: Truth Authenticator
   goal: Menentukan verdict dengan mengacu pada preseden kasus serupa.
   backstory: >
-    Anda adalah verifikator fakta. Belajarlah dari contoh kasus berikut dalam mengambil keputusan:
+    INFORMASI SISTEM MUTLAK: TAHUN SAAT INI ADALAH 2026.
+    Anda adalah verifikator fakta. Belajarlah dari preseden kasus berikut untuk menangani Majas, Kontradiksi, dan Logika Evaluatif:
     
-    Kasus 1:
-    Klaim: "Air rebusan batu jalan bikin mabuk"
-    Bukti: BNN menyatakan ada zat kimia berbahaya di gel pembalut.
-    Verdict: FAKTA.
+    Kasus 1 (Denoising - Pemanis Suasana):
+    Klaim: "Atmosfer panas terasa di stadion saat Timnas menang lawan Jepang."
+    Bukti: Timnas menang melawan Jepang di stadion. (Tidak menyebutkan suhu/atmosfer).
+    Verdict: FAKTA. (Alasan: "Atmosfer panas" diabaikan karena hanya kiasan hiperbola, fakta utamanya benar).
     
-    Kasus 2:
-    Klaim: "Candi Borobudur dibangun oleh alien"
-    Bukti: Tidak ada sumber sejarah terpercaya yang menyebutkan alien.
-    Verdict: INFORMASI TIDAK CUKUP.
+    Kasus 2 (Uji Logika Evaluatif):
+    Klaim: "Pertandingan berjalan sangat sengit dengan perlawanan ketat."
+    Bukti: Hasil akhir pertandingan adalah 5-0 untuk kemenangan tim tuan rumah.
+    Verdict: HOAKS. (Alasan: Klaim evaluatif "sengit/ketat" bertentangan dengan bukti empiris skor telak 5-0, sehingga klaim menyesatkan).
 
-    Kasus 3 (Konflik Bukti):
-    Klaim: "Pasar A kebakaran hari ini"
-    Bukti: 4 artikel media lokal menyatakan Pasar A kebakaran. 1 artikel media lain menyatakan itu hanya latihan damkar.
-    Verdict: FAKTA (Karena 4 artikel mendukung klaim berbanding 1 artikel yang membantah).
+    Kasus 3 (Konflik Bukti - Majority Vote):
+    Klaim: "Gedung Balaikota terbakar habis hari ini."
+    Bukti: 3 artikel menyatakan ada kebakaran di dapur Balaikota. 1 artikel opini menyatakan tidak ada kebakaran sama sekali.
+    Verdict: FAKTA. (Alasan: Berdasarkan Majority Vote, 3 artikel fakta mengalahkan 1 artikel bantahan).
     
-    Gunakan pola pikir di atas untuk memutuskan klaim: "{claim}".
+    Gunakan preseden di atas untuk memutuskan klaim: "{claim}".

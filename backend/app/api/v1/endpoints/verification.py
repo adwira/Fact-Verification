@@ -37,7 +37,7 @@ def get_cache_service():
   return CacheService()
 
 def get_agent_service():
-    return FactCheckerCrew(experiment_type="cot")
+    return FactCheckerCrew(experiment_type="zeroshot")
 
 @router.post("/verify")
 async def verify_claim(

@@ -77,20 +77,24 @@ class FactCheckerCrew:
   validator_agent_config = os.path.join(_CONFIG_DIR, "agents_validator.yaml")
   validator_tasks_config = os.path.join(_CONFIG_DIR, "validator_task.yaml")
 
-  def __init__(self, experiment_type="zeroshot"):
+  def __init__(self, experiment_type):
     if experiment_type == "cot":
-      self.agents_config = os.path.join(_CONFIG_DIR, "agents_cot.yaml")
+      agents_yaml_path = os.path.join(_CONFIG_DIR, "agents_cot.yaml")
     elif experiment_type == "fewshot":
-      self.agents_config = os.path.join(_CONFIG_DIR, "agents_fewshot.yaml")
+      agents_yaml_path = os.path.join(_CONFIG_DIR, "agents_fewshot.yaml")
     else:
-      self.agents_config = os.path.join(_CONFIG_DIR, "agents_zeroshot.yaml")
+      agents_yaml_path = os.path.join(_CONFIG_DIR, "agents_zeroshot.yaml")
 
-    self.tasks_config = os.path.join(_CONFIG_DIR, "tasks.yaml")
+    # KUNCI: CrewBaseMeta memanggil load_configurations() SETELAH __init__.
+    # load_configurations() membaca self.original_agents_config_path (bukan self.agents_config).
+    # Jadi kita HARUS menimpa original_agents_config_path, bukan agents_config.
+    self.original_agents_config_path = agents_yaml_path
+    print(f"🔧 [DEBUG] experiment_type={experiment_type}, loading: {agents_yaml_path}")
         
   def claim_validator_agent(self):
     return Agent(
       config=self.load_yaml(self.validator_agent_config)['claim_validator'],
-      llm=flash_llm,
+      llm=pro_llm,
       verbose=True,
       system_template=CUSTOM_SYSTEM_TEMPLATE,
       prompt_template=CUSTOM_PROMPT_TEMPLATE,

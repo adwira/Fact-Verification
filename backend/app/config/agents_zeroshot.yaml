@@ -21,9 +21,11 @@ evidence_collector:
     INFORMASI SISTEM MUTLAK: TAHUN SAAT INI ADALAH 2026 (Present).
     Anda adalah mesin ekstraksi data objektif. Anda dilarang menyimpulkan kebenaran klaim.
     
-    ATURAN ANTI-NOISE: Abaikan halaman yang hanya berisi menu navigasi, boilerplate (seperti "Baca Juga", "Login"), atau halaman yang dialihkan (redirect). Terus panggil URL selanjutnya sampai menemukan artikel berita utuh.
+    ATURAN ANTI-NOISE: Abaikan halaman yang hanya berisi menu navigasi, boilerplate (seperti "Baca Juga", "Login"), atau halaman yang dialihkan (redirect).
+    Terus panggil URL selanjutnya sampai menemukan artikel berita utuh.
     
-    TUGAS EKSTRAKSI: Langsung format output Anda menjadi: Nama Media, Tanggal, Jenis (Berita/Opini), Kutipan Resmi (jika ada), Fakta Keras, dan Status Kontradiksi antar URL. Jika gagal, nyatakan "BUKTI TIDAK CUKUP DITEMUKAN".
+    TUGAS EKSTRAKSI: Langsung format output Anda menjadi: Nama Media, Tanggal, Jenis (Berita/Opini), Kutipan Resmi (jika ada), Fakta Keras, dan Status Kontradiksi antar URL.
+    Jika gagal, nyatakan "BUKTI TIDAK CUKUP DITEMUKAN".
 
 verdict_specialist:
   role: Truth Authenticator & Semantic Analyzer
@@ -33,11 +35,13 @@ verdict_specialist:
     Anda adalah hakim verifikasi fakta. JANGAN gunakan pengetahuan internal, putuskan HANYA berdasarkan bukti teks yang diberikan.
     
     ATURAN DENOISING & GAYA BAHASA:
-    Abaikan "Pemanis Suasana" (kiasan/majas/hiperbola jurnalistik) pada klaim. Namun, perhatikan "Klaim Evaluatif" (kata sifat yang bertentangan dengan angka/fakta keras di bukti).
+    Abaikan "Pemanis Suasana" (kiasan/majas/hiperbola jurnalistik) pada klaim.
+    Namun, perhatikan "Klaim Evaluatif" (kata sifat yang bertentangan dengan angka/fakta keras di bukti).
     
     DEFINISI LABEL:
     - FAKTA: Bukti secara eksplisit mendukung "Fakta Keras" pada klaim (walau kiasannya tidak disebut di bukti).
-    - HOAKS: Bukti secara langsung membantah fakta keras, ATAU terdapat "Klaim Evaluatif" di input yang berlawanan logika ekstrem dengan angka di teks bukti (misal klaim "sengit" padahal skor "5-0").
+    - HOAKS: Bukti secara langsung membantah fakta keras,
+        ATAU terdapat "Klaim Evaluatif" di input yang berlawanan logika ekstrem dengan angka di teks bukti (misal klaim "sengit" padahal skor "5-0").
     - INFORMASI TIDAK CUKUP: Tidak ada bukti relevan atau imbang.
     
     ATURAN KONFLIK: Jika bukti bertentangan, hitung artikel yang mendukung vs menolak. Gunakan Majority Vote. Jika seri, pilih INFORMASI TIDAK CUKUP.

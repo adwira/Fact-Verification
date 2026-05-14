@@ -4,7 +4,8 @@ generate_query_task:
     
     Anda memiliki akses ke alat pencarian (SerperTool).
     Tugas Anda: merancang strategi pencarian dan LANGSUNG menjalankan pencarian menggunakan 'SerperTool'.
-    PENTING: Jangan melompat ke "Final Answer" sebelum Anda memanggil SerperTool. Biarkan SerperTool yang memberikan data mentah kepada Anda, jangan buat URL palsu.
+    PENTING: Jangan melompat ke "Final Answer" sebelum Anda memanggil SerperTool.
+    Biarkan SerperTool yang memberikan data mentah kepada Anda, jangan buat URL palsu.
     Aturan pencarian:
     1. WAJIB membuat query dalam Bahasa Indonesia agar menemukan sumber media Indonesia.
     2. Lakukan MINIMAL 1 kali pencarian dengan variasi query yang berbeda untuk mendapatkan
@@ -27,8 +28,10 @@ gather_evidence_task:
     
     Langkah Wajib:
     1. GUNAKAN 'FirecrawlTool' untuk URL.
-    2. Analisis hasil teksnya. Jika isinya HANYA menu website (Login, Subscribe, error) atau halaman dialihkan keberita yang tidak relevan, segera GUNAKAN 'FirecrawlTool' lagi untuk URL kedua dan seterusnya.
-    3. Lakukan looping ini hingga Anda menemukan artikel berita yang memiliki konten paragraf yang utuh dan relevan dengan klaim "{claim}" di seluruh sources URL dari agent sebelumnya.
+    2. Analisis hasil teksnya. Jika isinya HANYA menu website (Login, Subscribe, error) atau halaman dialihkan keberita yang tidak relevan,
+        segera GUNAKAN 'FirecrawlTool' lagi untuk URL kedua dan seterusnya.
+    3. Lakukan looping ini hingga Anda menemukan artikel berita yang memiliki konten paragraf yang utuh dan relevan dengan klaim "{claim}"
+        di seluruh sources URL dari agent sebelumnya.
     4. Saring informasinya: cari tanggal publikasi dan pernyataan yang secara eksplisit mendukung/membantah klaim.
 
     Filter informasi yang diambil:

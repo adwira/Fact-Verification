@@ -30,4 +30,4 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Backend Verifikasi Fakta Aktif mode zeroshot"}
+    return {"message": "Backend Verifikasi Fakta Aktif"}

@@ -7,7 +7,7 @@ class CacheService:
   def __init__(self):
     self.collection = get_cache_collection()
   
-  async def find_similar_fact(self, claim: str, threshold: float = 0.2):
+  async def find_similar_fact(self, claim: str, threshold: float = 0.5):
     """
     Mencari apakah klaim serupa sudah pernah diverifikasi sebelumnya.
     Semakin kecil nilai 'distance', semakin mirip maknanya.

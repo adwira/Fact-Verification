@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   title: "VerifAI — Instantly Verify The Fact",
   description:
     "Share your news to verify the truth. Enter your news and verify the fact with VerifAI.",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

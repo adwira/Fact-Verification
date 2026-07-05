@@ -50,7 +50,7 @@ class SerperTool(BaseTool):
 
 
 
-    def _run(self, query: str, limit: int = 5) -> str:
+    def _run(self, query: str, limit: int = 10) -> str:
         """Jalankan search secara sinkron (CrewAI memanggil run() dari dalam event loop)."""
 
         headers = {

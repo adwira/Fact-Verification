@@ -7,7 +7,7 @@ export default function VerificationPage() {
         {/* LED top internal accent */}
         <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
         <VerificationForm
-          placeholder="Type Your News here"
+          placeholder="Ketik Berita Anda Disini"
           textareaClassName="min-h-[180px]"
         />
       </div>

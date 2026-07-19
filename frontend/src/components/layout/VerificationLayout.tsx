@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageCircle, LayoutDashboard, Settings, Sparkles, Menu, X } from "lucide-react";
+import { MessageCircle, LayoutDashboard, Settings, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SIDEBAR_NAV = [
@@ -74,20 +74,7 @@ export function VerificationLayout({
 
         </nav>
 
-        {/* Upgrade Pro */}
-        <div className="shrink-0 border-t border-border p-4">
-          <p className="font-semibold text-white">Upgrade Pro</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Embrace Proven Plan for Optimal Results.
-          </p>
-          <Link
-            href="#discover-pro"
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-transparent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/5"
-          >
-            <Sparkles className="h-4 w-4" />
-            Coba Pro
-          </Link>
-        </div>
+
       </aside>
 
       {/* Main content */}

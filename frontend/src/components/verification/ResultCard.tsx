@@ -111,15 +111,15 @@ export function ResultCard({ data, className }: ResultCardProps) {
             </p>
             <ul className="space-y-1.5">
               {data.sources.map((url, i) => (
-                <li key={i}>
+                <li key={i} className="min-w-0">
                   <a
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                    className="flex w-full items-center gap-1.5 text-sm text-primary hover:underline min-w-0"
                   >
                     <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-                    <span className="truncate max-w-[min(100%,280px)]">
+                    <span className="min-w-0 flex-1 truncate">
                       {url}
                     </span>
                   </a>

@@ -1,8 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import { Header } from "@/components/layout/Header";
-import Link from "next/link";
 import { Sparkles, MessageCircle } from "lucide-react";
+import { SuspendedModal } from "@/components/ui/SuspendedModal";
 
 export default function Home() {
+  const [isSuspendedModalOpen, setIsSuspendedModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -22,18 +27,25 @@ export default function Home() {
         </section>
 
         <section className="mx-auto flex max-w-md flex-col items-center gap-4">
-          <Link
-            href="/verification"
-            className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-lg border-2 border-red-400/60 bg-transparent px-8 text-base font-medium text-white shadow-[0_0_20px_rgba(239,68,68,0.35)] transition-colors hover:bg-white/5"
+          <button
+            type="button"
+            onClick={() => setIsSuspendedModalOpen(true)}
+            className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-lg border-2 border-red-400/60 bg-transparent px-8 text-base font-medium text-white shadow-[0_0_20px_rgba(239,68,68,0.35)] transition-colors hover:bg-white/5 cursor-pointer"
           >
             <MessageCircle className="h-5 w-5" />
-            Chat / Verifikasi
-          </Link>
+            Verifikasi Berita Sekarang
+          </button>
           <p className="text-center text-sm text-muted-foreground">
             Mulai verifikasi klaim berita Anda
           </p>
         </section>
       </main>
+
+      <SuspendedModal
+        isOpen={isSuspendedModalOpen}
+        onClose={() => setIsSuspendedModalOpen(false)}
+      />
     </div>
   );
 }
+

@@ -1,0 +1,45 @@
+services:
+  backend:
+    build: .
+    container_name: fastapi_backend
+    restart: always
+    environment:
+      # Masukkan environment variables Anda di sini
+      - GEMINI_API_KEY=
+      - SERPER_API_KEY=
+      - FIRECRAWL_API_KEY=
+      - CHROMA_DB_PATH=/app/data_chromadb # Path di dalam kontainer
+    volumes:
+      # PENTING: Mount folder lokal VM/SERVER ke dalam kontainer
+      # Agar data vektor ChromaDB tidak hilang saat server mati
+      - ./data_chromadb:/app/data_chromadb
+    # Port tidak diexpose ke luar VM demi keamanan, hanya Nginx yang bisa akses
+
+  nginx:
+    image: nginx:1.31.0
+    container_name: nginx_proxy
+    restart: always
+    ports:
+      - "80:80" # Buka port 80 (HTTP) VM ke publik
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - backend
+      
+  evaluation:
+    build: ../evaluation
+    container_name: evaluation_app
+    environment:
+      # Menggunakan nama service 'backend' untuk mengakses API di network yang sama
+      - API_URL=http://backend:8000/api/v1/verify
+    volumes:
+      # Mount folder evaluation agar hasil_pengujian.csv tersimpan di mesin VM/Server
+      - ../evaluation:/app
+    depends_on:
+      - backend
+    # Menggunakan profil opsional agar tidak otomatis jalan saat 'docker-compose up'
+    # Untuk menjalankan: docker-compose --profile eval up evaluation
+    profiles:
+      - eval
